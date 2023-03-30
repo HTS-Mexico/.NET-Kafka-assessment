@@ -33,33 +33,33 @@ services:
     depends_on:
       - zoo1
 
-  scanner-1:
+  handheld-scanner:
     image: confluentinc/cp-kafka:latest
-    container_name: scanner-1
+    container_name: handheld-scanner
     networks:
       - dotnet-challenge
     depends_on:
-      - kafka
+      - kafka1
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
-      KAFKA_TOPIC: scanner-1
+      KAFKA_TOPIC: handheld-scanner
       KAFKA_SLEEP: "10"
     command: |
       sh -c 'while true; do echo {"product_id": "P-$$(( $$RANDOM % 10 + 1 ))","timestamp":"$$(date -u +'%Y-%m-%dT%H:%M:%S.%NZ')","scanner_id":"SC-$$(( $$RANDOM % 1000 + 900 ))"} \
       | kafka-console-producer --broker-list kafka1:19092 --topic $$KAFKA_TOPIC; sleep $$KAFKA_SLEEP; done'
   
-  scanner-2:
+  pallet-scanner:
     image: confluentinc/cp-kafka:latest
-    container_name: scanner-2
+    container_name: pallet-scanner
     networks:
       - dotnet-challenge
     depends_on:
-      - kafka
+      - kafka1
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zoo1:2181
-      KAFKA_TOPIC: scanner-2
+      KAFKA_TOPIC: pallet-scanner
       KAFKA_SLEEP: "10"
     command: |
       sh -c 'while true; do echo \|P-$$(( $$RANDOM % 10 + 1 ))\|$$(( $$RANDOM % 1000 + 900 ))\|$$(date -u +'%Y-%m-%dT%H:%M:%S.%NZ')\| \
